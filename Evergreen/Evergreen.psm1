@@ -8,16 +8,18 @@ Param()
 #region Get public and private function definition files
 $publicRoot = Join-Path -Path $PSScriptRoot -ChildPath "Public"
 $privateRoot = Join-Path -Path $PSScriptRoot -ChildPath "Private"
-$public = @( Get-ChildItem -Path (Join-Path $publicRoot "*.ps1") -ErrorAction SilentlyContinue )
-$private = @( Get-ChildItem -Path (Join-Path $privateRoot "*.ps1") -ErrorAction SilentlyContinue )
+$appsRoot = Join-Path -Path $PSScriptRoot -ChildPath "Apps"
+$public = @( Get-ChildItem -Path (Join-Path $publicRoot "*.ps1") -ErrorAction "SilentlyContinue" )
+$private = @( Get-ChildItem -Path (Join-Path $privateRoot "*.ps1") -ErrorAction "SilentlyContinue" )
+$apps = @( Get-ChildItem -Path (Join-Path $appsRoot "*.ps1") -ErrorAction "SilentlyContinue" )
 
 # Dot source the files
-ForEach ($import in @($Public + $Private)) {
+ForEach ($import in @($Public + $Private + $Apps)) {
     Try {
-        . $import.fullname
+        . $import.FullName
     }
     Catch {
-        Write-Error -Message "Failed to import function $($import.fullname): $_"
+        Write-Error -Message "Failed to import function $($import.FullName): $_"
     }
 }
 

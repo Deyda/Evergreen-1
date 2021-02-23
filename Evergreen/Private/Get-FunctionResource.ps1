@@ -17,7 +17,7 @@ Function Get-FunctionResource {
 
     try {
         Write-Verbose -Message "$($MyInvocation.MyCommand): read module resource strings from [$AppManifest]"
-        $content = Get-Content -Path $AppManifest -Raw -ErrorAction SilentlyContinue
+        $content = Get-Content -Path $AppManifest -Raw -ErrorAction "SilentlyContinue"
     }
     catch [System.Exception] {
         Write-Warning -Message "$($MyInvocation.MyCommand): failed to read from: $AppManifest."
@@ -26,10 +26,10 @@ Function Get-FunctionResource {
 
     try {
         If (Test-PSCore) {
-            $hashTable = $content | ConvertFrom-Json -AsHashtable -ErrorAction SilentlyContinue
+            $hashTable = $content | ConvertFrom-Json -AsHashtable -ErrorAction "SilentlyContinue"
         }
         Else {
-            $hashTable = $content | ConvertFrom-Json -ErrorAction SilentlyContinue | ConvertTo-Hashtable
+            $hashTable = $content | ConvertFrom-Json -ErrorAction "SilentlyContinue" | ConvertTo-Hashtable
         }
     }
     catch [System.Exception] {

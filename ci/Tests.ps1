@@ -5,7 +5,7 @@
 [OutputType()]
 Param()
 
-If (Get-Variable -Name projectRoot -ErrorAction SilentlyContinue) {
+If (Get-Variable -Name projectRoot -ErrorAction "SilentlyContinue") {
 
     # Invoke Pester tests and upload results to AppVeyor
     # Excluding download tests as this is problematic for a few reasons
