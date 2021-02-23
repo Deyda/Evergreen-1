@@ -3,9 +3,6 @@ Function Get-VercelHyper {
         .SYNOPSIS
             Returns the latest Vercel Hyper version number and download.
 
-        .DESCRIPTION
-            Returns the latest Vercel Hyper version number and download.
-
         .NOTES
             Author: Aaron Parker
             Twitter: @stealthpuppy
@@ -19,7 +16,6 @@ Function Get-VercelHyper {
             Description:
             Returns the latest Vercel Hyper version number and download for each platform.
     #>
-    [Alias("Get-Atom")]
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding()]
     Param()

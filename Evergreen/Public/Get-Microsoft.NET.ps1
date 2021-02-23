@@ -3,9 +3,6 @@ Function Get-Microsoft.NET {
         .SYNOPSIS
             Returns the available Microsoft .NET Desktop Runtime versions and download URIs.
 
-        .DESCRIPTION
-            Returns the available Microsoft .NET Desktop Runtime versions and download URIs.
-
         .NOTES
             Author: Aaron Parker
             Twitter: @stealthpuppy
@@ -30,7 +27,7 @@ s
 
     # Read the version number from the version URI
     ForEach ($Channel in $res.Get.Update.Channels) {
-        $Content = Invoke-WebContent -Uri ($res.Get.Update.Uri -replace $res.Get.Update.ReplaceText, $Channel)
+        $Content = Invoke-WebRequestWrapper -Uri ($res.Get.Update.Uri -replace $res.Get.Update.ReplaceText, $Channel)
         If ($Null -ne $Content) {
 
             # Read last line of the returned content to retrieve the version number

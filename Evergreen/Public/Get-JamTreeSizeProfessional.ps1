@@ -3,9 +3,6 @@ Function Get-JamTreeSizeProfessional {
         .SYNOPSIS
             Returns the the latest JAM Software TreeSize Professional version number and download URI.
 
-        .DESCRIPTION
-            Returns the the latest JAM Software TreeSize Professional version number and download URI.
-
         .NOTES
             Site: https://stealthpuppy.com
             Author: Aaron Parker
@@ -32,9 +29,8 @@ Function Get-JamTreeSizeProfessional {
     $iwcParams = @{
         Uri       = $res.Get.Uri
         UserAgent = $res.Get.UserAgent
-        Raw       = $True
     }
-    $Content = Invoke-WebContent @iwcParams
+    $Content = Invoke-WebRequestWrapper @iwcParams
 
     # Build object and output to the pipeline
     $PSObject = [PSCustomObject] @{

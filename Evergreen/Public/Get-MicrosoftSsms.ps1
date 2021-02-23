@@ -3,9 +3,6 @@ Function Get-MicrosoftSsms {
         .SYNOPSIS
             Returns the latest SQL Server Management Studio release version number and download.
 
-        .DESCRIPTION
-            Returns the latest SQL Server Management Studio release version number and download.
-
         .NOTES
             Author: Bronson Magnan
             Twitter: @cit_bronson
@@ -30,10 +27,10 @@ Function Get-MicrosoftSsms {
     Write-Verbose -Message $res.Name
 
     # Resolve the SSMS update feed
-    $UpdateFeed = Resolve-Uri -Uri $res.Get.Update.Uri
+    $UpdateFeed = Resolve-SystemNetWebRequest -Uri $res.Get.Update.Uri
 
     # SQL Management Studio downloads/versions documentation
-    $Content = Invoke-WebContent -Uri $UpdateFeed.ResponseUri.AbsoluteUri -Raw
+    $Content = Invoke-WebRequestWrapper -Uri $UpdateFeed.ResponseUri.AbsoluteUri -Raw
 
     # Convert content to XML document
     If ($Null -ne $Content) {
@@ -54,7 +51,7 @@ Function Get-MicrosoftSsms {
 
                         # Follow the download link which will return a 301
                         $Uri = $res.Get.Download.Uri -replace $res.Get.Download.ReplaceText, $res.Get.Download.Language[$language.key]
-                        $ResponseUri = (Resolve-Uri -Uri $Uri).ResponseUri.AbsoluteUri
+                        $ResponseUri = (Resolve-SystemNetWebRequest -Uri $Uri).ResponseUri.AbsoluteUri
             
                         # Check returned URL. It should be a go.microsoft.com/fwlink/?linkid style link
                         If ($Null -ne $ResponseUri) {

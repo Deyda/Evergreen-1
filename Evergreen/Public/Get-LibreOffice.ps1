@@ -1,9 +1,6 @@
 Function Get-LibreOffice {
     <#
         .SYNOPSIS
-            Gets the latest LibreOffice version and download URIs.
-
-        .DESCRIPTION
             Gets the latest LibreOffice version and download URIs, including help packs / language packs for Windows.
 
         .NOTES
@@ -43,7 +40,7 @@ Function Get-LibreOffice {
         Raw                  = $True
         SkipCertificateCheck = $True
     }
-    $Content = Invoke-WebContent @iwcParams
+    $Content = Invoke-WebRequestWrapper @iwcParams
 
     If ($Null -ne $Content) {
 

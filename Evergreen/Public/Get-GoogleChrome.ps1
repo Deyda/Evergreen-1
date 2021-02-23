@@ -1,9 +1,6 @@
 Function Get-GoogleChrome {
     <#
         .SYNOPSIS
-            Returns the available Google Chrome versions.
-
-        .DESCRIPTION
             Returns the available Google Chrome versions across all platforms and channels by querying the offical Google version JSON.
 
         .NOTES
@@ -28,16 +25,15 @@ Function Get-GoogleChrome {
     Write-Verbose -Message $res.Name
 
     # Read the JSON and convert to a PowerShell object. Return the current release version of Chrome
-    $Content = Invoke-WebContent -Uri $res.Get.Update.Uri
-    If ($Null -ne $Content) {
-        
-        # Convert the returned JSON content to an object
-        $Json = $Content | ConvertFrom-Json
+    $updateFeed = Invoke-RestMethodWrapper -Uri $res.Get.Update.Uri
+    If ($Null -ne $updateFeed) {
 
         # Read the JSON and build an array of platform, channel, version
         ForEach ($platform in $res.Get.Download.Platforms.GetEnumerator()) {
+            
             Write-Verbose -Message "$($MyInvocation.MyCommand): $($platform.Name)."
-            $stable = $Json.versions | Where-Object { ($_.channel -eq $res.Get.Download.Channel) -and ($_.os -eq $platform.Name) }  
+            $stable = $updateFeed.versions | Where-Object { ($_.channel -eq $res.Get.Download.Channel) -and ($_.os -eq $platform.Name) }
+
             ForEach ($version in $stable) {
                 $PSObject = [PSCustomObject] @{
                     Version      = $version.current_version

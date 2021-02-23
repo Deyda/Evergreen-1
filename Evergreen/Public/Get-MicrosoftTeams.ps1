@@ -3,9 +3,6 @@ Function Get-MicrosoftTeams {
         .SYNOPSIS
             Returns the available Microsoft Teams versions and download URIs.
 
-        .DESCRIPTION
-            Returns the available Microsoft Teams versions and download URIs for Windows.
-
         .NOTES
             Author: Aaron Parker
             Twitter: @stealthpuppy
@@ -17,7 +14,7 @@ Function Get-MicrosoftTeams {
             Get-MicrosoftTeams
 
             Description:
-            Returns the available Microsoft Teams versions and download URIs for Windows.
+            Returns the available Microsoft Teams versions and download URIs.
     #>
     [OutputType([System.Management.Automation.PSObject])]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
@@ -28,33 +25,35 @@ Function Get-MicrosoftTeams {
     $res = Get-FunctionResource -AppName ("$($MyInvocation.MyCommand)".Split("-"))[1]
     Write-Verbose -Message $res.Name
 
-    # Read the JSON and convert to a PowerShell object. Return the current release version of Teams
-    $Content = Invoke-WebContent -Uri $res.Get.Update.Uri
+    ForEach ($ring in $res.Get.Update.Rings.GetEnumerator()) {
 
-    # Read the JSON and build an array of platform, channel, version
-    If ($Null -ne $Content) {
+        # Read the JSON and convert to a PowerShell object. Return the release version of Teams
+        $Uri = $res.Get.Update.Uri -replace $res.Get.Update.ReplaceText, $res.Get.Update.Rings[$ring.Key]
+        $updateFeed = Invoke-RestMethodWrapper -Uri $Uri
 
-        # Convert object from JSON
-        $Json = $Content | ConvertFrom-Json
+        # Read the JSON and build an array of platform, channel, version
+        If ($Null -ne $updateFeed) {
 
-        # Match version number
-        $Version = [RegEx]::Match($Json.releasesPath, $res.Get.Update.MatchVersion).Captures.Groups[1].Value
+            # Match version number
+            $Version = [RegEx]::Match($updateFeed.releasesPath, $res.Get.Update.MatchVersion).Captures.Groups[1].Value
 
-        # Step through each architecture
-        ForEach ($item in $res.Get.Download.Uri.GetEnumerator()) {
+            # Step through each architecture
+            ForEach ($item in $res.Get.Download.Uri.GetEnumerator()) {
 
-            # Build the output object
-            $PSObject = [PSCustomObject] @{
-                Version      = $Version
-                Architecture = $item.Name
-                URI          = $res.Get.Download.Uri[$item.Key] -replace $res.Get.Download.ReplaceText, $Version
+                # Build the output object
+                $PSObject = [PSCustomObject] @{
+                    Version      = $Version
+                    Ring         = $ring.Name
+                    Architecture = $item.Name
+                    URI          = $res.Get.Download.Uri[$item.Key] -replace $res.Get.Download.ReplaceText, $Version
+                }
+
+                # Output object to the pipeline
+                Write-Output -InputObject $PSObject
             }
-
-            # Output object to the pipeline
-            Write-Output -InputObject $PSObject
         }
-    }
-    Else {
-        Write-Warning -Message "$($MyInvocation.MyCommand): failed to return content from $($res.Get.Update.Uri)."
+        Else {
+            Write-Warning -Message "$($MyInvocation.MyCommand): failed to return content from $($res.Get.Update.Uri)."
+        }
     }
 }

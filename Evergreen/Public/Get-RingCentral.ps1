@@ -27,9 +27,8 @@ Function Get-RingCentral {
     # Read the RingCentral version from the YML source
     $params = @{
         Uri = $res.Get.Update.Uri
-        Raw = $true
     }
-    $Content = Invoke-WebContent @params
+    $Content = Invoke-RestMethodWrapper @params
     try {
         $YmlVersion = [RegEx]::Match($Content, $res.Get.MatchYmlVersion).Captures.Groups[1].Value
         Write-Verbose -Message "$($MyInvocation.MyCommand): Found version: $YmlVersion."
@@ -44,7 +43,7 @@ Function Get-RingCentral {
         ForEach ($installer in $res.Get.Download[$platform].Keys) {
 
             # Follow the download link which will return a 301/302
-            $redirectUrl = (Resolve-Uri -Uri $res.Get.Download[$platform][$installer]).ResponseUri.AbsoluteUri
+            $redirectUrl = (Resolve-SystemNetWebRequest -Uri $res.Get.Download[$platform][$installer]).ResponseUri.AbsoluteUri
 
             # Match the URL without the text after the ?
             try {

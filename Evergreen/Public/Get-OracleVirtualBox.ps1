@@ -14,7 +14,7 @@ Function Get-OracleVirtualBox {
             Get-OracleVirtualBox
 
             Description:
-            Returns the latest verison and downloads for each operating system.
+            Returns the latest version and downloads for each operating system.
     #>
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding()]
@@ -25,7 +25,7 @@ Function Get-OracleVirtualBox {
     Write-Verbose -Message $res.Name
     
     # Get latest VirtualBox version
-    $Version = Invoke-WebContent -Uri $res.Get.Update.Uri
+    $Version = Invoke-WebRequestWrapper -Uri $res.Get.Update.Uri
 
     If ($Null -ne $Version) {
         $Version = [RegEx]::Match($Version, $res.Get.Download.MatchVersion).Captures.Groups[1].Value

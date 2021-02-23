@@ -1,8 +1,20 @@
 Function Get-PaintDotNet {
     <#
+        .SYNOPSIS
+            Get the current version and download URL for the Paint.NET tools.
+
         .NOTES
             Author: Bronson Magnan
             Twitter: @cit_bronson
+        
+        .LINK
+            https://github.com/aaronparker/Evergreen
+
+        .EXAMPLE
+            Get-PaintDotNet
+
+            Description:
+            Returns the latest version and downloads for each operating system.
     #>
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding()]
@@ -13,7 +25,7 @@ Function Get-PaintDotNet {
     Write-Verbose -Message $res.Name
 
     # Read the Paint.NET updates feed
-    $Content = Invoke-WebContent -Uri $res.Get.Uri
+    $Content = Invoke-WebRequestWrapper -Uri $res.Get.Uri
     If ($Null -ne $Content) {
 
         # Convert the content from string data
