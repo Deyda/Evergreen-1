@@ -1,7 +1,27 @@
 Function Export-EvergreenManifest {
     <#
         .SYNOPSIS
-            Returns a hashtable of an app manifest
+            Exports an Evergreen application JSON manifest as a hashtable.
+
+        .DESCRIPTION
+            Exports an Evergreen application JSON manifest as a hashtable.
+
+        .NOTES
+            Site: https://stealthpuppy.com
+            Author: Aaron Parker
+            Twitter: @stealthpuppy
+        
+        .LINK
+            https://github.com/aaronparker/Evergreen
+
+        .PARAMETER Name
+            The application name to return details for. The list of supported applications can be found with Find-EvergreenApp.
+
+        .EXAMPLE
+            Export-EvergreenManifest -Name "MicrosoftEdge"
+
+            Description:
+            Exports the application manifest for the application "MicrosoftEdge".
     #>
     [OutputType([System.Management.Automation.PSObject])]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
@@ -12,6 +32,6 @@ Function Export-EvergreenManifest {
         [System.String] $Name = "Template"
     )
     
-    Write-Output -InputObject (Get-FunctionResource -AppName $Name)
-    #Write-Output -InputObject $script:resourceStrings
+    $Output = Get-FunctionResource -AppName $Name
+    If ($Output) { Write-Output -InputObject $Output }
 }

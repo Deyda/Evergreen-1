@@ -1,7 +1,39 @@
 Function Find-EvergreenApp {
     <#
         .SYNOPSIS
-            Lists the applications that Evergreen supports
+            Outputs a table with the applications that Evergreen supports.
+
+        .DESCRIPTION
+            Outputs a table from the internal application functions and manifests to list the applications supported by Evergreen. 
+
+        .NOTES
+            Site: https://stealthpuppy.com
+            Author: Aaron Parker
+            Twitter: @stealthpuppy
+        
+        .LINK
+            https://github.com/aaronparker/Evergreen
+
+        .PARAMETER Name
+            The application name to return details for. The list of supported applications can be found with Find-EvergreenApp.
+
+        .EXAMPLE
+            Find-EvergreenApp
+
+            Description:
+            Returns a table with the all of the currently supported applications.
+
+        .EXAMPLE
+            Find-EvergreenApp -Name "Edge"
+
+            Description:
+            Returns a table with the all of the currently supported applications that match "Edge".
+
+        .EXAMPLE
+            Find-EvergreenApp -Name "Microsoft"
+
+            Description:
+            Returns a table with the all of the currently supported applications that match "Microsoft".
     #>
     [OutputType([System.Management.Automation.PSObject])]
     [CmdletBinding()]
@@ -20,6 +52,18 @@ Function Find-EvergreenApp {
     Write-Verbose -Message "$($MyInvocation.MyCommand): Search path: $($params.Path)."
     $Manifests = Get-ChildItem @params
 
+    # Filter the included manifests based on the -Name parameter
+    If ($PSBoundParameters.ContainsKey('Name')) {
+        try {
+            Write-Verbose -Message "$($MyInvocation.MyCommand): Filter for: $Name."
+            $Manifests = $Manifests | Where-Object { $_.Name -match $Name }
+        }
+        catch {
+            Throw $_
+        }
+    }
+
+    # Build an object from the manifest details and file name and output to the pipeline
     ForEach ($manifest in $Manifests) {
         try {
             $Json = Get-Content -Path $manifest.FullName | ConvertFrom-Json
